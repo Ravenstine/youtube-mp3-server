@@ -1,5 +1,6 @@
 require 'bundler'
 Bundler.require
+PROJECT_ROOT = Dir.pwd
 
 class Transcoder < EM::Connection
   def initialize response
@@ -28,7 +29,7 @@ class Server < EM::HttpServer::Server
     EM.defer proc {
       ViddlRb.get_urls("https://www.youtube.com/watch?v=#{params['id']}").first
     }, proc { |video_url|
-      cmd = "curl '#{video_url}' | ffmpeg -i - -vn -f mp3 -"
+      cmd = "#{PROJECT_ROOT}/downloader.sh #{video_url}"
       EventMachine.popen(cmd, Transcoder, response)
     }
 
