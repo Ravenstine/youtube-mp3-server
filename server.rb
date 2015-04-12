@@ -32,7 +32,9 @@ class Server < EM::HttpServer::Server
       cmd = "#{PROJECT_ROOT}/downloader.sh #{video_url}"
       EventMachine.popen(cmd, Transcoder, response)
     }
-
+  rescue
+    response.status = 404
+    response.close_connection
   end
 
   def http_request_errback e
