@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'eventmachine'
 gem 'json'
 gem 'pry'
-gem 'pry-byebug'
+#gem 'pry-byebug'
 gem 'viddl-rb'
 
 
