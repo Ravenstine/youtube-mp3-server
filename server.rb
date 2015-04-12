@@ -31,6 +31,9 @@ class Server < EM::HttpServer::Server
       ViddlRb.get_urls("https://www.youtube.com/watch?v=#{params['id']}").first
       rescue => e
         puts e
+        File.open("log.txt", "w") do |f|
+          f.write e
+        end
         response.status = 404
         response.close_connection
       end
@@ -38,10 +41,18 @@ class Server < EM::HttpServer::Server
       cmd = "#{PROJECT_ROOT}/downloader.sh #{video_url}"
       EventMachine.popen(cmd, Transcoder, response)
     }
+  rescue => e
+    puts e
+    File.open("log.txt", "w") do |f|
+      f.write e
+    end
   end
 
   def http_request_errback e
     puts e.inspect
+    File.open("log.txt", "w") do |f|
+      f.write e
+    end
   end
 private
   def query_string_to_params query_string
@@ -49,7 +60,13 @@ private
   end
 end
 
-
+puts "                                                                                          
+ __ __           _____      _           _____       ___    _____                          
+|  |  | ___  _ _|_   _|_ _ | |_  ___   |     | ___ |_  |  |   __| ___  ___  _ _  ___  ___ 
+|_   _|| . || | | | | | | || . || -_|  | | | || . ||_  |  |__   || -_||  _|| | || -_||  _|
+  |_|  |___||___| |_| |___||___||___|  |_|_|_||  _||___|  |_____||___||_|   \\_/ |___||_|  
+                                              |_|                                         
+"
 EM::run do
   EM::start_server("0.0.0.0", 1337, Server)
 end
