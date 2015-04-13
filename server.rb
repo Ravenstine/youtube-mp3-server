@@ -27,16 +27,7 @@ class Server < EM::HttpServer::Server
     response.headers['Content-Disposition'] = "attachment; filename=\"#{params['id']}.mp3\""
 
     EM.defer proc {
-      begin
       ViddlRb.get_urls("https://www.youtube.com/watch?v=#{params['id']}").first
-      rescue => e
-        puts e
-        File.open("log.txt", "w") do |f|
-          f.write e
-        end
-        response.status = 404
-        response.close_connection
-      end
     }, proc { |video_url|
       cmd = "#{PROJECT_ROOT}/downloader.sh #{video_url}"
       EventMachine.popen(cmd, Transcoder, response)
@@ -50,9 +41,6 @@ class Server < EM::HttpServer::Server
 
   def http_request_errback e
     puts e.inspect
-    File.open("log.txt", "w") do |f|
-      f.write e
-    end
   end
 private
   def query_string_to_params query_string
