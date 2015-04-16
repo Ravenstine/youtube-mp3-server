@@ -8,4 +8,4 @@ gem 'viddl-rb'
 
 
 # gem 'eventmachine_httpserver', require: 'evma_httpserver'
-gem 'em-http-server'
+gem 'em-http-server', github: "ravenstine/em-http-server"
