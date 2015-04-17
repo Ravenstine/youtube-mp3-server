@@ -18,7 +18,6 @@ end
 class Server < EM::HttpServer::Server
 
   def process_http_request
-    log_access @http_ip_address, @http_request_uri, @http_query_string, @http[:user_agent]
     params = query_string_to_params(@http_query_string)
     response = EM::DelegatedHttpResponse.new(self)
     response.status = 200
@@ -38,14 +37,8 @@ class Server < EM::HttpServer::Server
     handle_error e
   end
 
-  def log_access ip_address, request_uri, query_string, user_agent
-    write_to_log "#{Time.now} - [ACCESS] - #{ip_address} - #{request_uri} - #{query_string} - #{user_agent}"
-  end
-
   def handle_error e
-    message = "#{Time.now} - [ERROR] - #{e.message}"
-    puts message
-    write_to_log e.message, e.backtrace
+    $stderr.puts e
   end
 
   def http_request_errback e
@@ -72,5 +65,5 @@ puts "
                                               |_|                                         
 "
 EM::run do
-  EM::start_server("0.0.0.0", 80, Server)
+  EM::start_server("0.0.0.0", 8080, Server)
 end
